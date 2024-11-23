@@ -6,7 +6,7 @@ This application provides an **interactive map** that displays Eddy Covariance m
 It visualizes **the status of data flow** (High-Frequency and Low-Frequency data) for each station, helping users monitor their operational state.
 This repository includes:
 - A **backend API** for retrieving EC stations data and calculating their statuses.
-- A **frontend** that visualizes stations on an interactive map.
+- A **frontend** that visualizes stations on an interactive map with markers that **update every minute**.
 - **Configuration files** for database and table integration.
 
 ## Features
@@ -29,12 +29,15 @@ This repository includes:
   - Database connection.
   - Table and column mapping for station data.
 
+## Result:
+Below is an example of the interactive map with operational statuses:
+![Interactive Map Screenshot](images/Result_version_1_0.png "Interactive Map Screenshot")
+- Green markers indicate fully operational stations.
+- Gold markers indicate warnings in data flow.
+- Red markers indicate offline stations.
 
+## Workflow overview:
+For a more detailed explanation of each workflow step, visit the [wiki](https://github.com/Svyatoslav-stack/Interactive-Stations-Status-Map/wiki).
 
-
-
-
-
-
-
-
+## Contact 
+Feel free to contact me via email at svyatoslav.rogozin@gmail.com or svatoslav.rogozin@ut.ee.
