@@ -3,7 +3,10 @@
 ## Overview
 
 This application provides an **interactive map** that displays Eddy Covariance monitoring stations. 
-It visualizes **the status of data flow** (High-Frequency and Low-Frequency data) for each station, helping users monitor their operational state.
+It visualizes **the status of data flow** (High-Frequency and Low-Frequency data) for each station, helping scientists and technicians monitor their operational state with **minimal delay**. 
+
+> **Note**: This application is **specifically** made for **internal use** within Tartu University's **local network** and is **protected by a VPN**.
+
 This repository includes:
 - A **backend API** for retrieving EC stations data and calculating their statuses.
 - A **frontend** that visualizes stations on an interactive map with markers that **update every minute**.
@@ -18,10 +21,7 @@ This repository includes:
 
 ### Frontend
 - Interactive map using **Leaflet.js**.
-- Displays stations as color-coded markers:
-  - **Green**: Online
-  - **Gold**: Warning
-  - **Red**: Offline
+- Displays stations as **color-coded** markers:
 - Clustered markers for better usability.
 
 ### Configuration
