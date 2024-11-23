@@ -1,0 +1,6 @@
+Flask
+Flask-Cors
+PyYAML
+pyodbc
+pytz
+waitress

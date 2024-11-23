@@ -1,0 +1,51 @@
+logging:
+  filename: "app.log"  # Log file name
+  level: "ERROR"       # Logging level
+  format: "%(asctime)s - %(levelname)s - %(message)s"  # Log message format
+
+database:
+  server: "your_server_address"  # Replace with your database server address
+  database: "your_database_name" # Replace with your database name
+  username: "your_username"      # Replace with your database username
+  password: "your_password"      # Replace with your database password
+
+tables:
+  Your_Table_Name:  # Replace with the actual table name
+    columns:  # List of columns in the table
+      - "Column1"
+      - "Column2"
+      - "Column3"
+      - "Column4"
+      - "Column5"
+      - "Column6"
+    gas_analyzer:  # Columns related to gas analyzer
+      - "Column1"
+      - "Column2"
+    anemometer:  # Columns related to anemometer
+      - "Column3"
+      - "Column4"
+      - "Column5"
+      - "Column6"
+
+  Example_LF_Table:  # Replace with an example LF table name
+    columns:  # List of columns in the LF table
+      - "Column1"
+      - "Column2"
+      - "Column3"
+      - "Column4"
+      - "Column5"
+      - "Column6"
+      - "Column7"
+      - "Column8"
+      - "Column9"
+    lf_columns:  # Columns specific to LF data processing
+      - "Column1"
+      - "Column2"
+      - "Column3"
+      - "Column4"
+      - "Column5"
+      - "Column6"
+      - "Column7"
+      - "Column8"
+      - "Column9"
+    and so on....
