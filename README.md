@@ -29,7 +29,12 @@ This repository includes:
   - Database connection.
   - Table and column mapping for station data.
 
-### Clone the Repository
-```bash
-git clone https://github.com/your-repo/station-status-map.git
-cd station-status-map
+
+
+
+
+
+
+
+
+
