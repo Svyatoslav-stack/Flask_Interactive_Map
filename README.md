@@ -1,43 +1,40 @@
-# Interactive Map for Eddy Covariance Stations with Data Flow Monitoring Status
+# Interactive Map for Eddy Covariance Stations with Data Flow Monitoring Status  
 
-## Overview
+## Overview  
 
-This application provides an **interactive map** that displays Eddy Covariance monitoring stations. 
-It visualizes **the status of data flow** (High-Frequency and Low-Frequency data) for each station, helping scientists and technicians monitor their operational state with **minimal delay**. 
+This application provides an **interactive map** for displaying Eddy Covariance (EC) monitoring stations. It visualizes the **data flow status** (both High-Frequency and Low-Frequency data) of each station, enabling scientists and technicians to monitor their operational states with a **minimal delay of just 1 minute**.  
 
-> **Note**: This application is **specifically** made for **internal use** within Tartu University's **local network** and is **protected by a VPN**.
+> **Note**: This application is designed exclusively for **internal use** within Tartu University's **local network** and is secured with **VPN access**.  
 
-This repository includes:
-- A **backend API** for retrieving EC stations data and calculating their statuses.
-- A **frontend** that visualizes stations on an interactive map with markers that **update every minute**.
-- **Configuration files** for database and table integration.
+---
 
-## Features
+## Features  
 
-### Backend API
-- Built using **Flask** and **Waitress**.
-- Connects to SQL Server via **pyodbc**.
-- Calculates statuses (HF and LF data), detects violations, and returns results in JSON format.
+- **Backend API** (`station_status_app.py`) to retrieve EC station data and calculate operational statuses.  
+- **Frontend visualization** (`index.html` in the `templates` folder), which displays an interactive map with markers that **refresh every minute**.  
+- **Configuration flexibility**: A `config.yaml` file provides an example of SQL configuration setup.  
+- A convenient **startup script** (`start_station_status_app.bat`) for launching the application.  
 
-### Frontend
-- Interactive map using **Leaflet.js**.
-- Displays stations as **color-coded** markers:
-- Clustered markers for better usability.
+---
 
-### Configuration
-- YAML-based file (`config.yaml`) for:
-  - Database connection.
-  - Table and column mapping for station data.
+## Result  
 
-## Result:
-Below is an example of the interactive map with operational statuses:
-![Interactive Map Screenshot](images/Result_version_1_0.png "Interactive Map Screenshot")
-- Green markers indicate fully operational stations.
-- Gold markers indicate warnings in data flow.
-- Red markers indicate offline stations.
+The application generates an interactive map where stations are represented by color-coded markers:  
+- **Green markers**: Stations are fully operational.  
+- **Red markers**: Stations require attention.  
 
-## Workflow overview:
-For a more detailed explanation of each workflow step, visit the [wiki](https://github.com/Svyatoslav-stack/Interactive-Stations-Status-Map/wiki).
+![Interactive Map Screenshot](images/Result_1.png "Interactive Map Screenshot")  
 
-## Contact 
-Feel free to contact me via email at svyatoslav.rogozin@gmail.com or svatoslav.rogozin@ut.ee.
+---
+
+## Workflow Overview  
+
+For a detailed explanation of the workflow and additional setup instructions, refer to the [wiki](https://github.com/Svyatoslav-stack/Interactive-Stations-Status-Map/wiki).  
+
+---
+
+## Contact  
+
+For any questions or assistance, feel free to reach out via email:  
+- **Primary email**: svatoslav.rogozin@ut.ee  
+- **Alternative email**: svyatoslav.rogozin@gmail.com  
