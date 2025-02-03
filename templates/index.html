@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <!-- Meta tag for responsive display on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stations Status Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
@@ -11,10 +14,41 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
+            margin: 0; /* Ensures the map occupies the full window */
         }
 
         #map {
             height: 100vh;
+            width: 100%;
+        }
+
+        /* Styles for the refresh button placed instead of the default zoom controls */
+        .update-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 9999;
+            padding: 8px 12px;
+            background-color: #00aaff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+        }
+        .update-button:hover {
+            background-color: #0077cc;
+        }
+        
+        /* Responsive styling for small screens */
+        @media (max-width: 600px) {
+            .update-button {
+                font-size: 12px;
+                padding: 6px 10px;
+                top: 10px;
+                left: 10px;
+            }
         }
 
         .station-icon {
@@ -84,57 +118,104 @@
 
         .violations-section {
             margin-top: 10px;
-            font-size: 13px;
+            font-size: 10px;
             font-family: 'Roboto';
         }
 
         .violations-section .no-violations {
             color: green;
             font-weight: bold;
+            font-size: 10px;
         }
 
         .violations-section .violations {
             color: red;
             font-weight: bold;
             font-family: 'Roboto';
+            font-size: 10px;
         }
     </style>
 </head>
 <body>
+    <!-- Refresh button placed instead of default zoom controls -->
+    <button class="update-button" onclick="updateMarkers()">Refresh Map</button>
+    
     <div id="map"></div>
 
     <script>
+        // Function to generate random coordinates within specified bounds.
+        // In this example, the bounds roughly correspond to Estonia.
+        function getRandomCoords() {
+            const latMin = 57.5;
+            const latMax = 59.9;
+            const lonMin = 21.5;
+            const lonMax = 28.1;
+            const lat = Math.random() * (latMax - latMin) + latMin;
+            const lon = Math.random() * (lonMax - lonMin) + lonMin;
+            return [lat, lon];
+        }
+
+        // Array of station objects with anonymized names, generic API URLs, and random coordinates.
         const stations = [
             {
                 name: "StationA",
-                fullName: "Station A Full Name",
-                coords: [58.000000, 26.000000],
-                apiUrl: "https://example.com/api/status/StationA"
+                fullName: "Station A Research Site",
+                coords: getRandomCoords(),
+                apiUrl: "http://example.com/api/station_combined_status/StationA"
             },
             {
                 name: "StationB",
-                fullName: "Station B Full Name",
-                coords: [58.000000, 26.000000],
-                apiUrl: "https://example.com/api/status/StationB"
+                fullName: "Station B Research Site",
+                coords: getRandomCoords(),
+                apiUrl: "http://example.com/api/station_combined_status/StationB"
             },
             {
                 name: "StationC",
-                fullName: "Station C Full Name",
-                coords: [58.000000, 26.000000],
-                apiUrl: "https://example.com/api/status/StationC"
+                fullName: "Station C Research Site",
+                coords: getRandomCoords(),
+                apiUrl: "http://example.com/api/station_combined_status/StationC"
+            },
+            {
+                name: "StationD",
+                fullName: "Station D Research Site",
+                coords: getRandomCoords(),
+                apiUrl: "http://example.com/api/station_combined_status/StationD"
+            },
+            {
+                name: "StationE",
+                fullName: "Station E Research Site",
+                coords: getRandomCoords(),
+                apiUrl: "http://example.com/api/station_combined_status/StationE"
+            },
+            {
+                name: "StationF",
+                fullName: "Station F Research Site",
+                coords: getRandomCoords(),
+                apiUrl: "http://example.com/api/station_combined_status/StationF"
             }
         ];
 
+        // Define map bounds (approximate coordinates)
+        const mapBounds = L.latLngBounds(
+            [57.5, 21.5],  // southwest point
+            [59.9, 28.1]   // northeast point
+        );
+
+        // Initialize the map with zoom controls disabled and restricted bounds
         const map = L.map('map', {
             minZoom: 7,
-            maxZoom: 12,
-            maxBounds: [[57.9, 25.5], [58.9, 27.5]]
-        }).setView([58.300000, 26.500000], 8);
+            maxZoom: 9,
+            zoomControl: false,
+            maxBounds: mapBounds,
+            maxBoundsViscosity: 1.0
+        }).setView([58.377625, 26.729006], 8);
 
+        // OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: ''
         }).addTo(map);
 
+        // Function to determine the overall cluster icon color (red if any station is offline)
         const determineClusterColor = (markers) => {
             let hasRed = false;
             markers.forEach(marker => {
@@ -144,6 +225,7 @@
             return hasRed ? 'red' : 'green';
         };
 
+        // Create a cluster icon
         const createClusterIcon = (cluster) => {
             const markers = cluster.getAllChildMarkers();
             const clusterColor = determineClusterColor(markers);
@@ -168,10 +250,12 @@
             });
         };
 
+        // Marker cluster group
         const markers = L.markerClusterGroup({
             iconCreateFunction: createClusterIcon
         });
 
+        // Create an individual station icon
         const createStationIcon = (color, letter) => {
             return L.divIcon({
                 className: `station-icon ${color}`,
@@ -182,6 +266,7 @@
             });
         };
 
+        // Function to fetch data for a single station
         const fetchStationData = async (url) => {
             try {
                 const response = await fetch(url);
@@ -191,30 +276,49 @@
                 return await response.json();
             } catch (err) {
                 console.error(`Error fetching data from ${url}:`, err);
+                // Return default offline status
                 return { overall_status: "Offline", violations: { hf_violations: [], lf_violations: [] }, error: true };
             }
         };
 
+        // Asynchronous function to update markers on the map
         const updateMarkers = async () => {
+            // Clear current markers
             markers.clearLayers();
+
+            // Iterate over all stations
             for (const station of stations) {
+                // Fetch data via API
                 const stationData = await fetchStationData(station.apiUrl);
                 if (!stationData) continue;
 
                 const overallStatus = stationData.overall_status || "Offline";
+                // Determine color (Online = green, Offline = red)
                 const statusClass = {
                     "Online": "green",
                     "Offline": "red"
                 }[overallStatus];
 
+                // HF violations
                 const hfViolations = stationData.violations?.hf_violations?.length > 0
                     ? stationData.violations.hf_violations.map(v => `<span class="violations">${v}</span>`).join(', ')
                     : '<span class="no-violations">None</span>';
 
+                // LF violations
                 const lfViolations = stationData.violations?.lf_violations?.length > 0
                     ? stationData.violations.lf_violations.map(v => `<span class="violations">${v}</span>`).join(', ')
                     : '<span class="no-violations">None</span>';
+                    
+                // Additional logic for Aerodyne (example for StationC)
+                let aerodyneStatus = "";
+                if (station.name === "StationC" && stationData.aerodyne_status) {
+                    aerodyneStatus = `<li><b>Aerodyne Status:</b> 
+                        <span class="${stationData.aerodyne_status === 'Online' ? 'status-green' : 'status-red'}">
+                            ${stationData.aerodyne_status || 'N/A'}
+                        </span></li>`;
+                }
 
+                // HTML for popup content
                 const popupContent = `
                     <div style="font-size: 14px;">
                         <b style="font-size: 16px; font-family: 'Roboto'; color: ${statusClass};">${station.fullName}</b><br>
@@ -225,13 +329,14 @@
                                 <li><b>Anemometer Status:</b> 
                                     <span class="${stationData.anemometer_status === 'Online' ? 'status-green' : 'status-red'}">${stationData.anemometer_status || 'N/A'}</span>
                                 </li>
+                                ${aerodyneStatus}
                                 <li><b>Gas Analyzer Status:</b> 
                                     <span class="${stationData.gas_analyzer_status === 'Online' ? 'status-green' : 'status-red'}">${stationData.gas_analyzer_status || 'N/A'}</span>
                                 </li>
                             </ul>
                             <b>LF Data Status:</b> 
                             <span class="${stationData.lf_status === 'Online' ? 'status-green' : 'status-red'}">${stationData.lf_status || 'N/A'}</span><br>
-                            <b>Last Update:</b> ${stationData.last_update || 'N/A'}
+                            <b>Last Update:</b> ${stationData.last_update_tallinn || 'N/A'}
                         </div>
                         <hr style="margin: 10px 0; border: 1px solid #ccc;">
                         <div class="violations-section">
@@ -241,17 +346,23 @@
                     </div>
                 `;
 
+                // Create marker
                 const marker = L.marker(station.coords, {
                     icon: createStationIcon(statusClass, station.name[0])
                 }).bindPopup(popupContent);
 
+                // Add marker to group
                 markers.addLayer(marker);
             }
 
+            // Add marker group to the map
             map.addLayer(markers);
+
+            // Auto-update every 60 seconds.
             setTimeout(updateMarkers, 60000);
         };
 
+        // Initial call on page load
         updateMarkers();
     </script>
 </body>
